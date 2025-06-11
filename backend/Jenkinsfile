@@ -1,0 +1,119 @@
+// Jenkinsfile for the Smart Resume Ranker (Docker Build Version)
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout from Git') {
+            steps {
+                echo '1. Checking out code from GitHub...'
+                checkout scm
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo '2. Installing dependencies and running tests...'
+                sh '''
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install -r backend/requirements.txt
+                cd backend
+                pytest
+                '''
+            }
+        }
+
+        // --- OPTIONAL ANALYSIS STAGE ---
+        // If you are short on time, you can comment out or delete this entire stage.
+        // If you have SonarQube & OWASP configured, you can leave it in.
+        /*
+        stage('Code Analysis') {
+            steps {
+                echo '3. Running SonarQube and OWASP analysis...'
+                withSonarQubeEnv('My SonarQube Server') {
+                    sh 'sonar-scanner -Dsonar.projectKey=SmartResumeRanker -Dsonar.sources=./backend -Dsonar.host.url=http://localhost:9000 -Dsonar.login=${env.SONAR_CREDENTIALS_ID}'
+                }
+                dependencyCheck additionalArguments: '--scan ./backend --format "ALL"', odcInstallation: 'My OWASP DC'
+            }
+        }
+        */
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo '4. Building the Docker image...'
+                    sh "docker build -t smart-resume-ranker:latest ."
+                    echo "Docker image 'smart-resume-ranker:latest' built successfully."
+                }
+            }// Jenkinsfile for the Smart Resume Ranker (Docker Version with Full Analysis)
+pipeline {
+    agent any
+
+    environment {
+        // --- IMPORTANT: UPDATE THESE VALUES ---
+        // The ID of the credentials you set up in Jenkins for your SonarQube token
+        SONAR_CREDENTIALS_ID = 'sonarqube-token' 
+        // The URL of your running SonarQube server
+        SONAR_HOST_URL = 'http://localhost:9000' 
+        // The unique key for this project in SonarQube
+        SONAR_PROJECT_KEY = 'SmartResumeRanker'
+        // A name for the Docker image we will build
+        DOCKER_IMAGE_NAME = 'smart-resume-ranker' 
+    }
+
+    stages {
+        stage('Checkout from Git') {
+            steps {
+                echo '1. Checking out code from GitHub...'
+                checkout scm
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo '2. Installing dependencies and running tests...'
+                // Using a shell script block to run multiple commands
+                sh '''
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install -r backend/requirements.txt
+                cd backend
+                pytest
+                '''
+            }
+        }
+
+        stage('SonarQube & OWASP Analysis') {
+            steps {
+                echo '3. Running code quality and security analysis...'
+                
+                // SonarQube Analysis Step
+                withSonarQubeEnv('My SonarQube Server') { // Use the name of your SonarQube config in Jenkins
+                    sh '''
+                    sonar-scanner \
+                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                        -Dsonar.sources=./backend \
+                        -Dsonar.host.url=${SONAR_HOST_URL} \
+                        -Dsonar.login=${SONAR_CREDENTIALS_ID}
+                    '''
+                }
+                
+                // OWASP Dependency Check Step
+                dependencyCheck additionalArguments: '--scan ./backend --format "ALL"', odcInstallation: 'My OWASP DC' // Use the name of your OWASP config in Jenkins
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo "4. Building the Docker image..."
+                    sh "docker build -t ${DOCKER_IMAGE_NAME}:latest ."
+                    echo "Docker image '${DOCKER_IMAGE_NAME}:latest' built successfully."
+                }
+            }
+        }
+    }
+}
+        }
+    }
+}
