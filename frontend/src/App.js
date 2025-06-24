@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
-import Header from './components/Header'; // <-- Import the new Header
+import Header from './components/Header';
 import AnalyzerPage from './AnalyzerPage';
 import ImproverPage from './ImproverPage';
 import SimulatorPage from './SimulatorPage';
@@ -19,7 +19,7 @@ function App() {
     <Router>
       <div className="app-container">
         <Sidebar isOpen={isSidebarOpen} />
-
+        
         <div className={`page-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
           <Header toggleSidebar={toggleSidebar} />
           <main className="main-content">

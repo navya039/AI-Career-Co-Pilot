@@ -1,0 +1,71 @@
+.dashboard-container {
+  margin-top: 20px;
+}
+.dashboard-container h2 {
+  color: #ffffff;
+  border-bottom: 2px solid #374151;
+  padding-bottom: 10px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-areas:
+    "score skills"
+    "suggestions suggestions";
+  gap: 20px;
+}
+.grid-item {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 20px;
+}
+.score-card { grid-area: score; text-align: center; }
+.skills-card { grid-area: skills; }
+.suggestions-card { grid-area: suggestions; }
+
+.grid-item h3 {
+  margin-top: 0;
+  color: #ffffff;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 10px;
+}
+.grid-item h4 {
+  color: #9ca3af;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.grid-item h4.missing-title { margin-top: 30px; }
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.skill-tag {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-weight: 500;
+  font-size: 0.9em;
+}
+.skill-tag.verified {
+  background-color: #10b981; /* Green */
+  color: #ffffff;
+}
+.skill-tag.missing {
+  background-color: #ef4444; /* Red */
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.suggestions-card ul {
+  padding-left: 20px;
+  margin: 0;
+}
+.suggestions-card li {
+  margin-bottom: 10px;
+  color: #d1d5db;
+  line-height: 1.5;
+}

@@ -1,0 +1,52 @@
+.analyzer-container {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.analyzer-container h1 {
+  font-size: 2.5em;
+  color: #ffffff; /* White text */
+  border-bottom: 2px solid #374151; /* Darker border */
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.analyzer-container p {
+  font-size: 1.1em;
+  color: #9ca3af; /* Lighter gray text */
+  margin-bottom: 30px;
+}
+
+.analysis-form {
+  padding: 30px;
+  background-color: #1f2937; /* A slightly lighter dark for the form */
+  border: 1px solid #374151;
+  border-radius: 8px;
+}
+
+.form-group label {
+  color: #d1d5db; /* Lighter text for labels */
+}
+
+.form-group input[type="file"],
+.form-group textarea {
+  background-color: #374151; /* Darker background for inputs */
+  color: #ffffff; /* White text */
+  border: 1px solid #4b5563;
+}
+
+/* (Keep all other styles in this file the same) */
+.form-group { margin-bottom: 25px; text-align: left; }
+.form-group label { display: block; font-size: 1.1em; margin-bottom: 10px; font-weight: 600; }
+.form-group input[type="file"], .form-group textarea { width: 100%; padding: 12px; border-radius: 6px; font-size: 1em; box-sizing: border-box; }
+.form-group textarea { resize: vertical; min-height: 150px; }
+.analyze-button { background-color: #3498db; color: white; width: 100%; padding: 15px 30px; border: none; border-radius: 6px; font-size: 1.2em; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease; }
+.analyze-button:hover:not(:disabled) { background-color: #2980b9; }
+.analyze-button:disabled { background-color: #4b5563; cursor: not-allowed; }
+.results-section { margin-top: 30px; }
+.loading-text { font-size: 1.2em; color: #3498db; }
+.error-text { font-size: 1.2em; color: #fca5a5; font-weight: bold; background-color: #4c1d22; padding: 15px; border-radius: 6px; border: 1px solid #ef4444; }
+.results-container { margin-top: 20px; padding: 20px; background-color: #1f2937; border: 1px solid #374151; border-radius: 8px; text-align: left; }
+.results-container h2 { color: #ffffff; border-bottom: 2px solid #374151; padding-bottom: 10px; }
+.results-container pre { white-space: pre-wrap; word-wrap: break-word; background-color: #111827; padding: 15px; border-radius: 5px; color: #d1d5db; font-family: 'Courier New', Courier, monospace; border: 1px solid #374151; }
