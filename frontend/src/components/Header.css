@@ -1,0 +1,33 @@
+.header {
+  background-color: #1a202c; 
+  color: white; 
+  padding: 0 20px;
+  border-bottom: 1px solid #2d3748;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.hamburger-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  margin-right: 15px;
+}
+
+.header-title {
+  font-size: 1.5em;
+  color: white;
+  margin: 0;
+}
