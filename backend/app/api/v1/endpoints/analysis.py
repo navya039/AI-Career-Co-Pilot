@@ -1,33 +1,49 @@
-from fastapi import APIRouter, UploadFile, File, Form
+# backend/app/api/v1/endpoints/analysis.py
+
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from app.schemas.analysis import AnalysisResult
+from app.schemas.simulator import SimulatorRequest
 from app.services.parser import extract_text_from_file
 from app.services.analyzer import calculate_match_score, extract_skills
-# Import our new Gemini service
-from app.services.gemini import generate_ai_suggestions
+from app.services import gemini
 
+# Create the router object for this endpoint file
 router = APIRouter()
 
 @router.post("/", response_model=AnalysisResult)
 async def perform_analysis(
-    resume_file: UploadFile = File(...),
-    job_description: str = Form(...)
+    resume_file: UploadFile = File(..., description="The user's resume file (PDF or DOCX)."),
+    job_description: str = Form(..., description="The job description text.")
 ):
     """
-    This endpoint now uses the real NLP engine and the Gemini API for suggestions.
+    This endpoint extracts text, performs analysis, and gets AI suggestions.
     """
-    # Steps 1, 2, and 3 are the same
     resume_text = await extract_text_from_file(resume_file)
-    match_score = calculate_match_score(resume_text, job_description)
-    matching_skills, missing_skills = extract_skills(resume_text, job_description)
+    
+    if not resume_text:
+        raise HTTPException(status_code=400, detail="Could not read text from the uploaded resume file. Please ensure it is a valid PDF or DOCX.")
 
-    # --- THIS IS THE BIG CHANGE ---
-    # 4. Generate suggestions using the Gemini API, passing it all the context.
-    ai_suggestions = await generate_ai_suggestions(resume_text, job_description, missing_skills)
+    # Perform the analysis using our services
+    score = calculate_match_score(resume_text, job_description)
+    matching, missing = extract_skills(resume_text, job_description)
+    suggestions = await gemini.generate_ai_suggestions(resume_text, job_description, missing)
 
-    # 5. Return the REAL results from all our services
+    # Return the real results
     return AnalysisResult(
-        match_score=match_score,
-        verified_skills=matching_skills,
-        missing_skills=missing_skills,
-        ai_suggestions=ai_suggestions
+        match_score=score,
+        verified_skills=matching,
+        missing_skills=missing,
+        ai_suggestions=suggestions
     )
+
+
+@router.post("/simulate", response_model=dict)
+async def simulate_interview(request_data: SimulatorRequest):
+    """
+    Receives the full resume and JD text and generates interview questions.
+    """
+    questions = await gemini.generate_interview_questions(
+        request_data.resume_text, 
+        request_data.job_description_text
+    )
+    return {"questions": questions}

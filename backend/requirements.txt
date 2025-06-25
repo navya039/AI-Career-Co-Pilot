@@ -1,11 +1,13 @@
 fastapi
 uvicorn[standard]
 python-decouple
-python-multipart
+google-generativeai
+PyMuPDF
+python-docx
+scikit-learn
 pytest
 httpx
 pytest-asyncio
 anyio
-scikit-learn
-PyMuPDF
-google-generativeai
+python-multipart
+gunicorn

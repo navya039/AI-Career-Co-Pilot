@@ -4,11 +4,11 @@ FROM python:3.10-slim
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements file first to leverage Docker caching
+# Copy the updated requirements file
 COPY backend/requirements.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install the Python dependencies
+RUN pip install --no-cache-dir --upgrade pip -r requirements.txt
 
 # Copy the entire backend application code into the container
 COPY ./backend /app

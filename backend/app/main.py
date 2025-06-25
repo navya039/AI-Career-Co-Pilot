@@ -8,10 +8,9 @@ app = FastAPI(
     version=PROJECT_VERSION,
 )
 
-origins = [
-    "http://localhost",
-    "http://localhost:3000",
-]
+# --- THIS IS THE CHANGE ---
+# We are allowing all origins with "*" to resolve the browser security issue.
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,

@@ -1,14 +1,11 @@
+# backend/app/schemas/analysis.py
 from pydantic import BaseModel
-from typing import List, Optional
-
-# This defines the shape of the data we expect in the request
-# For now, we only need the job description text. The file is handled separately.
-class AnalysisInput(BaseModel):
-    job_description: str
+from typing import List
 
 # This defines the shape of the data our API will send back
 class AnalysisResult(BaseModel):
     match_score: int
     verified_skills: List[str]
     missing_skills: List[str]
-    ai_suggestions: List[str]
+    # This is now a single string to hold the Markdown formatted text
+    ai_suggestions: str
