@@ -1,13 +1,68 @@
+// frontend/src/components/ResultsDashboard.js
 import React from 'react';
-import Chart from 'react-apexcharts';
-import { Link } from 'react-router-dom'; // <-- Import Link
+import { Link } from 'react-router-dom';
+import ReactApexChart from 'react-apexcharts';
+import ReactMarkdown from 'react-markdown';
 import './ResultsDashboard.css';
 
-function ResultsDashboard({ results }) {
+const ResultsDashboard = ({ results }) => {
   const { match_score, verified_skills, missing_skills, ai_suggestions } = results;
 
-  // Chart options remain the same...
-  const scoreChartOptions = { /* ...omitted for brevity... */ };
+  const scoreChartOptions = {
+    chart: {
+      type: 'radialBar',
+      height: 250,
+    },
+    plotOptions: {
+      radialBar: {
+        startAngle: -135,
+        endAngle: 135,
+        hollow: {
+          margin: 0,
+          size: '70%',
+          background: 'transparent',
+        },
+        track: {
+          background: '#374151',
+          strokeWidth: '67%',
+          margin: 0,
+        },
+        dataLabels: {
+          show: true,
+          name: {
+            show: false,
+          },
+          value: {
+            formatter: function (val) {
+              return parseInt(val) + "%";
+            },
+            color: '#ffffff',
+            fontSize: '28px',
+            show: true,
+            offsetY: 10,
+          }
+        }
+      }
+    },
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shade: 'dark',
+        type: 'horizontal',
+        shadeIntensity: 0.5,
+        gradientToColors: ['#3498db'],
+        inverseColors: true,
+        opacityFrom: 1,
+        opacityTo: 1,
+        stops: [0, 100]
+      }
+    },
+    stroke: {
+      lineCap: 'round'
+    },
+    labels: ['Match Score'],
+  };
+
   const scoreChartSeries = [match_score];
 
   return (
@@ -16,41 +71,40 @@ function ResultsDashboard({ results }) {
       <div className="dashboard-grid">
         <div className="grid-item score-card">
           <h3>Match Score</h3>
-          <Chart options={scoreChartOptions} series={scoreChartSeries} type="radialBar" height={250} />
+          <ReactApexChart options={scoreChartOptions} series={scoreChartSeries} type="radialBar" height={280} />
         </div>
+
         <div className="grid-item skills-card">
           <h3>Skill Analysis</h3>
           <h4>Matching Skills</h4>
           <div className="skills-list">
-            {verified_skills.map((skill, index) => (
-              <span key={index} className="skill-tag verified">{skill}</span>
-            ))}
+            {verified_skills.length > 0 ? 
+              verified_skills.map((skill, index) => <span key={index} className="skill-tag verified">{skill}</span>) :
+              <p>No matching skills found from our database.</p>
+            }
           </div>
-          <h4 className="missing-title">Missing Skills</h4>
+          <h4 className="missing-title">Missing Skills (Click to get a roadmap!)</h4>
           <div className="skills-list">
-            {missing_skills.map((skill, index) => (
-              // --- THIS IS THE CHANGE ---
-              // Each tag is now a link to the Improver page, passing the skills list in the state
-              <Link
-                to="/improver"
-                state={{ missingSkills: missing_skills, selectedSkill: skill }}
-                key={index}
-                className="skill-tag missing"
-              >
-                {skill}
-              </Link>
-            ))}
+            {missing_skills.length > 0 ?
+              missing_skills.map((skill, index) => (
+                <Link to="/improver" state={{ missingSkills: missing_skills, selectedSkill: skill }} key={index} className="skill-tag missing">
+                  {skill}
+                </Link>
+              )) :
+              <p>No required skills seem to be missing. Great job!</p>
+            }
           </div>
         </div>
+
         <div className="grid-item suggestions-card">
-          <h3>AI Suggestions</h3>
-          <ul>
-            {ai_suggestions.map((suggestion, index) => <li key={index}>{suggestion}</li>)}
-          </ul>
+          <h3>AI Suggestions for Your Resume</h3>
+          <div className="suggestions-box">
+             <ReactMarkdown>{ai_suggestions}</ReactMarkdown>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default ResultsDashboard;

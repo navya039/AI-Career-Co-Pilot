@@ -1,0 +1,15 @@
+.account-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+.account-container h1 { font-size: 2.5em; color: #ffffff; border-bottom: 2px solid #374151; padding-bottom: 10px; margin-bottom: 10px; }
+.account-container p { color: #9ca3af; margin-bottom: 30px; }
+.settings-card { background-color: #1f2937; border: 1px solid #374151; border-radius: 8px; padding: 30px; margin-bottom: 20px; }
+.settings-card h3 { margin-top: 0; color: #ffffff; }
+.settings-card .form-group { margin-bottom: 20px; }
+.settings-card label { display: block; font-weight: 600; margin-bottom: 8px; }
+.settings-select { width: 100%; padding: 10px; background-color: #374151; border: 1px solid #4b5563; color: white; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
+.clear-button { background-color: #ef4444; color: white; padding: 12px 25px; border: none; border-radius: 5px; font-size: 1em; font-weight: bold; cursor: pointer; transition: background-color 0.2s; }
+.clear-button:hover:not(:disabled) { background-color: #dc2626; }
+.clear-button:disabled { background-color: #4b5563; cursor: not-allowed; }
+.history-list { list-style: none; padding: 0; margin-top: 20px; margin-bottom: 20px; }
+.history-item { display: flex; justify-content: space-between; align-items: center; background-color: #374151; padding: 15px; border-radius: 6px; margin-bottom: 10px; }
+.history-item-empty { color: #6b7280; text-align: center; padding: 15px; }
+.history-score { font-weight: bold; font-size: 1.1em; color: #3498db; }
