@@ -69,3 +69,8 @@ frontend/coverage
 # Operating System Files
 .DS_Store
 Thumbs.db
+# Terraform state and lock files
+terraform.tfstate
+terraform.tfstate.backup
+.terraform/
+.terraform.lock.hcl
