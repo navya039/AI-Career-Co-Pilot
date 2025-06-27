@@ -2,13 +2,13 @@
 
 # 1. Configure the AWS Provider
 provider "aws" {
-  region = var.aws_region
+  region = "ap-south-1"
 }
 
-# 2. Define Variables that Jenkins will provide
+# 2. Define Variables from Jenkins
 variable "aws_region" {
   description = "The AWS region to create resources in."
-  default     = "ap-south-1"  # ✅ Changed to Mumbai
+  default     = "ap-south-1"
 }
 
 variable "ecr_image_uri" {
@@ -19,10 +19,10 @@ variable "ecr_image_uri" {
 variable "gemini_api_key" {
   description = "The Google Gemini API key."
   type        = string
-  sensitive   = true 
+  sensitive   = true
 }
 
-# 3. Define the Security Group (Firewall) for the server
+# 3. Define Security Group
 resource "aws_security_group" "app_sg" {
   name        = "ai-copilot-sg"
   description = "Allow HTTP and SSH inbound traffic"
@@ -49,22 +49,22 @@ resource "aws_security_group" "app_sg" {
   }
 }
 
-# 4. Define the EC2 Instance
+# 4. Create EC2 Instance
 resource "aws_instance" "app_server" {
-  ami           = "ami-02a2af70a66af6dfb" # ✅ Ubuntu 22.04 in ap-south-1 (Mumbai)
+  ami           = "ami-02a2af70a66af6dfb" # ✅ Verified for ap-south-1 (Mumbai)
   instance_type = "t2.micro"
   key_name      = "ai-aws-key"
-  security_groups = [aws_security_group.app_sg.name]
+
+  # ✅ Use security group ID
+  vpc_security_group_ids = [aws_security_group.app_sg.id]
 
   user_data = <<-EOF
               #!/bin/bash
               apt-get update -y
               apt-get install -y docker.io awscli
-
               usermod -aG docker ubuntu
 
               aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${split("/", var.ecr_image_uri)[0]}
-
               docker pull ${var.ecr_image_uri}
 
               docker stop ai-co-pilot-container || true
@@ -77,3 +77,4 @@ resource "aws_instance" "app_server" {
     Name = "AI-Career-Co-Pilot-Server"
   }
 }
+
