@@ -2,7 +2,7 @@
 
 # 1. Configure the AWS Provider
 provider "aws" {
-  region = "us-east-1" # Or your preferred region like ap-south-1
+  region = "ap-south-1" # Or your preferred region like ap-south-1
 }
 
 # 2. Define Variables that Jenkins will provide
