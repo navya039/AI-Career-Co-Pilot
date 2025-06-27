@@ -2,13 +2,13 @@
 
 # 1. Configure the AWS Provider
 provider "aws" {
-  region = "ap-south-1" # Or your preferred region like ap-south-1
+  region = var.aws_region
 }
 
 # 2. Define Variables that Jenkins will provide
 variable "aws_region" {
   description = "The AWS region to create resources in."
-  default     = "us-east-1"
+  default     = "ap-south-1"  # ✅ Changed to Mumbai
 }
 
 variable "ecr_image_uri" {
@@ -27,7 +27,6 @@ resource "aws_security_group" "app_sg" {
   name        = "ai-copilot-sg"
   description = "Allow HTTP and SSH inbound traffic"
 
-  # Allow incoming web traffic on port 80
   ingress {
     from_port   = 80
     to_port     = 80
@@ -35,7 +34,6 @@ resource "aws_security_group" "app_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow incoming SSH traffic on port 22 for management
   ingress {
     from_port   = 22
     to_port     = 22
@@ -43,7 +41,6 @@ resource "aws_security_group" "app_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow all outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
@@ -52,36 +49,28 @@ resource "aws_security_group" "app_sg" {
   }
 }
 
-# 4. Define the EC2 Instance (the server) itself
+# 4. Define the EC2 Instance
 resource "aws_instance" "app_server" {
-  # This is a standard Ubuntu 22.04 AMI for the us-east-1 region.
-  # If you use a different region, you will need to find the correct AMI ID for that region.
-  ami           = "ami-0c55b159cbfafe1f0"
-  instance_type = "t2.micro"      # Free-tier eligible
-  key_name      = "ai-aws-key"    # The name of the key pair you created in your AWS account
+  ami           = "ami-02a2af70a66af6dfb" # ✅ Ubuntu 22.04 in ap-south-1 (Mumbai)
+  instance_type = "t2.micro"
+  key_name      = "ai-aws-key"
   security_groups = [aws_security_group.app_sg.name]
 
-  # This startup script runs automatically when the server is created
   user_data = <<-EOF
               #!/bin/bash
-              sudo apt-get update -y
-              sudo apt-get install -y docker.io awscli # Install Docker and AWS CLI
+              apt-get update -y
+              apt-get install -y docker.io awscli
 
-              # Add the ubuntu user to the docker group so we can run docker without sudo
-              sudo usermod -aG docker ubuntu
+              usermod -aG docker ubuntu
 
-              # Log in to AWS ECR (Elastic Container Registry)
-              aws ecr get-login-password --region ${var.aws_region} | sudo docker login --username AWS --password-stdin ${split("/", var.ecr_image_uri)[0]}
+              aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${split("/", var.ecr_image_uri)[0]}
 
-              # Pull the specific Docker image that Jenkins pushed to ECR
-              sudo docker pull ${var.ecr_image_uri}
+              docker pull ${var.ecr_image_uri}
 
-              # Stop and remove any old container with the same name
-              sudo docker stop ai-co-pilot-container || true
-              sudo docker rm ai-co-pilot-container || true
+              docker stop ai-co-pilot-container || true
+              docker rm ai-co-pilot-container || true
 
-              # Run the new container, passing the Gemini API key as a secure environment variable
-              sudo docker run -d --name ai-co-pilot-container -p 80:8000 -e GEMINI_API_KEY=${var.gemini_api_key} ${var.ecr_image_uri}
+              docker run -d --name ai-co-pilot-container -p 80:8000 -e GEMINI_API_KEY=${var.gemini_api_key} ${var.ecr_image_uri}
               EOF
 
   tags = {
