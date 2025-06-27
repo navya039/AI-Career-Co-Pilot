@@ -6,7 +6,9 @@ services:
     plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port 10000
-    workingDir: backend
+    buildFilter:
+      paths:
+        - backend/**
     envVars:
       - key: PORT
         value: 10000
