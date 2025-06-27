@@ -26,7 +26,7 @@ function ImproverPage() {
     setError(null);
     setRoadmap('');
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/v1/improve/roadmap", { bullet_point: skill });
+      const response = await axios.post("https://ai-career-backend-3ynk.onrender.com/api/v1/improve/roadmap", { bullet_point: skill });
       setRoadmap(response.data.improved_text);
     } catch (err) {
       setError("Failed to generate roadmap.");
@@ -58,7 +58,7 @@ function ImproverPage() {
     setImprovedBulletPoint('');
     setError(null);
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/v1/improve/bullet", {
+      const response = await axios.post("https://ai-career-backend-3ynk.onrender.com/api/v1/improve/bullet", {
         bullet_point: bulletPointInput
       });
       setImprovedBulletPoint(response.data.improved_text);
