@@ -21,7 +21,7 @@ function SimulatorPage() {
     setError('');
     setQuestions('');
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/v1/analyze/simulate", {
+      const response = await axios.post("https://ai-career-backend-3ynk.onrender.com/api/v1/analyze/simulate", {
         resume_text: resumeText,
         job_description_text: jobText
       });
