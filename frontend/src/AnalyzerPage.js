@@ -47,7 +47,7 @@ function AnalyzerPage() {
       formData.append('resume_file', resumeFile);
       formData.append('job_description', jobDescription);
 
-      const response = await axios.post("http://127.0.0.1:8000/api/v1/analyze/", formData, {
+      const response = await axios.post("https://ai-career-backend-3ynk.onrender.com/api/v1/analyze/", formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
