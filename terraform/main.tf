@@ -58,7 +58,7 @@ resource "aws_instance" "app_server" {
   # If you use a different region, you will need to find the correct AMI ID for that region.
   ami           = "ami-0c55b159cbfafe1f0"
   instance_type = "t2.micro"      # Free-tier eligible
-  key_name      = "my-aws-key"    # The name of the key pair you created in your AWS account
+  key_name      = "ai-aws-key"    # The name of the key pair you created in your AWS account
   security_groups = [aws_security_group.app_sg.name]
 
   # This startup script runs automatically when the server is created
