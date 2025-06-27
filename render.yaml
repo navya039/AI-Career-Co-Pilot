@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ai-career-copilot-backend
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 10000
+    workingDirectory: backend
+    envVars:
+      - key: GEMINI_API_KEY
+        value: your-api-key-here  # Replace with your actual API key
