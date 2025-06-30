@@ -64,7 +64,7 @@ function AnalyzerPage() {
 
   return (
     <div className="analyzer-container">
-      <h1>ATS Score Analyzer</h1>
+      <h1>Resume score Analyzer</h1>
       <p>Upload your resume and the job description to see how well you match!</p>
       
       <form className="analysis-form" onSubmit={handleSubmit}>
