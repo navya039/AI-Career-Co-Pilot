@@ -1,12 +1,10 @@
-# AI Career Co Pilot
-
 # AI Career Co-Pilot
 
 An intelligent career assistant that analyzes resumes against job descriptions using custom logic and AI suggestions. It helps users understand how well their resume matches a job role and provides personalized improvement suggestions and mock interview questions using Google’s Gemini API.
 
 ---
 
-![Architecture Diagram](./assets/architecture_diagram.png)
+![Architecture Diagram](./assets/architecture-diagram.png)
 
 > _Functional Architecture Diagram_: This app is built with a React frontend deployed on **Vercel**, a FastAPI backend containerized with **Docker** and deployed on **Render**, and it integrates with **Gemini API** to generate AI-powered suggestions.
 
