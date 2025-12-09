@@ -1,19 +1,17 @@
 # backend/app/services/analyzer.py
 
 import re
-import spacy
 from sentence_transformers import SentenceTransformer, util
 
-# Load NLP models
-nlp = spacy.load("en_core_web_sm")
+# Load semantic model once
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-# Static curated skill list (from your original project)
+# Static curated skill list
 SKILLS_DB = [
-    'python', 'java', 'c++', 'javascript', 'react', 'node.js', 'fastapi',
-    'django', 'flask', 'sql', 'mysql', 'postgresql', 'mongodb', 'git',
-    'docker', 'kubernetes', 'aws', 'azure', 'gcp', 'ci/cd', 'jenkins',
-    'sonarqube', 'owasp', 'rest api', 'machine learning', 'nlp', 'pytest'
+    "python", "java", "c++", "javascript", "react", "node.js", "fastapi",
+    "django", "flask", "sql", "mysql", "postgresql", "mongodb", "git",
+    "docker", "kubernetes", "aws", "azure", "gcp", "ci/cd", "jenkins",
+    "sonarqube", "owasp", "rest api", "machine learning", "nlp", "pytest"
 ]
 
 
@@ -21,18 +19,18 @@ def normalize(text: str) -> str:
     return text.lower().strip()
 
 
-def extract_matching_skills(text: str) -> set:
+def extract_matching_skills(text: str) -> set[str]:
     """
     Matches skills from SKILLS_DB using word-boundary regex search.
     """
     skills = set()
     for skill in SKILLS_DB:
-        if re.search(rf'\b{re.escape(skill)}\b', text, re.IGNORECASE):
+        if re.search(rf"\b{re.escape(skill)}\b", text, re.IGNORECASE):
             skills.add(skill)
     return skills
 
 
-def extract_skills(resume_text: str, job_description_text: str) -> tuple[list, list]:
+def extract_skills(resume_text: str, job_description_text: str) -> tuple[list[str], list[str]]:
     """
     Extracts verified and missing skills by matching known skills in both resume and JD text.
     Hybrid of static DB + regex search.
@@ -52,6 +50,7 @@ def extract_skills(resume_text: str, job_description_text: str) -> tuple[list, l
 def calculate_match_score(resume_text: str, job_description_text: str) -> int:
     """
     Calculates semantic similarity between resume and job description using Sentence-BERT.
+    Returns a score from 0–100.
     """
     if not resume_text or not job_description_text:
         return 0
