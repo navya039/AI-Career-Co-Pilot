@@ -1,64 +1,56 @@
 # backend/app/services/analyzer.py
 
 import re
-from sentence_transformers import SentenceTransformer, util
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
-# Load semantic model once
-model = SentenceTransformer("all-MiniLM-L6-v2")
-
-# Static curated skill list
+# Curated skill list
 SKILLS_DB = [
     "python", "java", "c++", "javascript", "react", "node.js", "fastapi",
     "django", "flask", "sql", "mysql", "postgresql", "mongodb", "git",
     "docker", "kubernetes", "aws", "azure", "gcp", "ci/cd", "jenkins",
-    "sonarqube", "owasp", "rest api", "machine learning", "nlp", "pytest"
+    "sonarqube", "owasp", "rest api", "machine learning", "nlp", "pytest",
 ]
 
 
-def normalize(text: str) -> str:
-    return text.lower().strip()
+def calculate_match_score(resume_text: str, job_description_text: str) -> int:
+    """
+    Simple TF-IDF + cosine similarity between resume and JD.
+    """
+    if not resume_text or not job_description_text:
+        return 0
+
+    try:
+        vectorizer = TfidfVectorizer(stop_words="english")
+        tfidf_matrix = vectorizer.fit_transform([resume_text, job_description_text])
+        cosine_sim = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])
+        score = float(cosine_sim[0][0])
+        return int(score * 100)
+    except Exception:
+        return 0
 
 
-def extract_matching_skills(text: str) -> set[str]:
+def _extract_matching_skills(text: str) -> set[str]:
     """
-    Matches skills from SKILLS_DB using word-boundary regex search.
+    Match skills from SKILLS_DB using word-boundary regex search (case-insensitive).
     """
+    text_lower = text.lower()
     skills = set()
     for skill in SKILLS_DB:
-        if re.search(rf"\b{re.escape(skill)}\b", text, re.IGNORECASE):
+        pattern = r"\b" + re.escape(skill.lower()) + r"\b"
+        if re.search(pattern, text_lower):
             skills.add(skill)
     return skills
 
 
 def extract_skills(resume_text: str, job_description_text: str) -> tuple[list[str], list[str]]:
     """
-    Extracts verified and missing skills by matching known skills in both resume and JD text.
-    Hybrid of static DB + regex search.
+    Extract verified and missing skills using the curated SKILLS_DB list.
     """
-    resume_text = resume_text.lower()
-    jd_text = job_description_text.lower()
-
-    resume_skills = extract_matching_skills(resume_text)
-    jd_skills = extract_matching_skills(jd_text)
+    resume_skills = _extract_matching_skills(resume_text)
+    jd_skills = _extract_matching_skills(job_description_text)
 
     verified = sorted(resume_skills & jd_skills)
     missing = sorted(jd_skills - resume_skills)
 
     return verified, missing
-
-
-def calculate_match_score(resume_text: str, job_description_text: str) -> int:
-    """
-    Calculates semantic similarity between resume and job description using Sentence-BERT.
-    Returns a score from 0–100.
-    """
-    if not resume_text or not job_description_text:
-        return 0
-
-    try:
-        resume_embedding = model.encode(resume_text, convert_to_tensor=True)
-        jd_embedding = model.encode(job_description_text, convert_to_tensor=True)
-        score = util.pytorch_cos_sim(resume_embedding, jd_embedding).item()
-        return int(score * 100)
-    except Exception:
-        return 0
