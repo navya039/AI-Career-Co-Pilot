@@ -3,8 +3,8 @@
 from fastapi import APIRouter
 from app.schemas.improver import (
     ImproverRequest,
-    ImproverResponse,
     RoadmapRequest,
+    ImproverResponse,
 )
 from app.services.gemini import (
     generate_bullet_point_suggestion,
@@ -13,7 +13,7 @@ from app.services.gemini import (
 
 router = APIRouter()
 
-# Bullet Point Builder (not currently used by UI, but kept for later)
+# Bullet Point Builder
 @router.post("/bullet", response_model=ImproverResponse)
 async def improve_bullet_point(request: ImproverRequest):
     improved_text = await generate_bullet_point_suggestion(
@@ -23,9 +23,8 @@ async def improve_bullet_point(request: ImproverRequest):
     return ImproverResponse(improved_text=improved_text)
 
 
-# Skill Gap Career Planner (used by the UI)
+# Skill Gap Career Planner (roadmap)
 @router.post("/roadmap", response_model=ImproverResponse)
 async def get_learning_roadmap(request: RoadmapRequest):
-    # Here we use request.skill_name, not bullet_point
     roadmap_text = await generate_learning_roadmap(skill=request.skill_name)
     return ImproverResponse(improved_text=roadmap_text)
